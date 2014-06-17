@@ -25,6 +25,8 @@ public class MyGdx implements ApplicationListener {
 
 	@Override
 	public void create() {
+		modelBatch = new ModelBatch();
+		
 		cam = new PerspectiveCamera(67, Gdx.graphics.getWidth(),
 				Gdx.graphics.getHeight());
 		cam.position.set(10f, 10f, 10f);
