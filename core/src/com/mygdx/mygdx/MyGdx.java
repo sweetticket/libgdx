@@ -47,7 +47,7 @@ public class MyGdx implements ApplicationListener {
 		
 		cam = new PerspectiveCamera(67, Gdx.graphics.getWidth(),
 				Gdx.graphics.getHeight());
-		cam.position.set(1f, 1f, 1f);
+		cam.position.set(7f, 7f, 7f);
 		cam.lookAt(0, 0, 0);
 		cam.near = 1f;
 		cam.far = 300f;
@@ -65,8 +65,13 @@ public class MyGdx implements ApplicationListener {
 	
 	private void doneLoading(){
 		Model ship = assets.get("data/ship.obj", Model.class);
-		ModelInstance shipInstance = new ModelInstance(ship);
-		instances.add(shipInstance);
+		for (float x =-5f; x <= 5f; x += 2f){
+			for (float z = -5f; z <= 5f; z+=2f){
+				ModelInstance shipInstance = new ModelInstance(ship);
+				shipInstance.transform.setToTranslation(x,0,z);
+				instances.add(shipInstance);
+			}
+		}
 		loading = false;
 	}
 
