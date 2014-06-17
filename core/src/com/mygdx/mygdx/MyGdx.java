@@ -9,15 +9,20 @@ import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
+import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
+import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 
 public class MyGdx implements ApplicationListener {
 
+	public CameraInputController camController;
+	public Environment environment;
 	public PerspectiveCamera cam;
 	public ModelBatch modelBatch;
 	public Model model;
@@ -25,8 +30,14 @@ public class MyGdx implements ApplicationListener {
 
 	@Override
 	public void create() {
-		modelBatch = new ModelBatch();
+		environment = new Environment();
+		environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.4f,
+				0.4f, 0.4f, 1f));
+		environment.add(new DirectionalLight().set(0.8f, 0.8f, 0.8f, -1f,
+				-0.8f, -0.2f));
 		
+		modelBatch = new ModelBatch();
+
 		cam = new PerspectiveCamera(67, Gdx.graphics.getWidth(),
 				Gdx.graphics.getHeight());
 		cam.position.set(10f, 10f, 10f);
@@ -40,17 +51,22 @@ public class MyGdx implements ApplicationListener {
 				new Material(ColorAttribute.createDiffuse(Color.GREEN)),
 				Usage.Position | Usage.Normal);
 		instance = new ModelInstance(model);
+		
+		camController = new CameraInputController(cam);
+		Gdx.input.setInputProcessor(camController);
 	}
 
 	@Override
 	public void render() {
-		Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		camController.update();
+		Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(),
+				Gdx.graphics.getHeight());
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
-		
+
 		modelBatch.begin(cam);
-		modelBatch.render(instance);
+		modelBatch.render(instance, environment);
 		modelBatch.end();
-		
+
 	}
 
 	@Override
